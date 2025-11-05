@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AvalphaTechnologies.CommissionCalculator.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CommisionController : ControllerBase
     {
         private readonly ICommissionService _commissionService;
