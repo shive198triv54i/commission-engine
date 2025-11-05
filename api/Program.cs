@@ -18,7 +18,7 @@ namespace AvalphaTechnologies.CommissionCalculator
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<ICommissionService, CommissionService>();
+            builder.Services.AddApplicationServices();
 
             var app = builder.Build();
 
