@@ -1,4 +1,5 @@
 
+using AvalphaTechnologies.CommissionCalculator.Extensions;
 using AvalphaTechnologies.CommissionCalculator.Services;
 using AvalphaTechnologies.CommissionCalculator.Services.Interfaces;
 
@@ -20,6 +21,8 @@ namespace AvalphaTechnologies.CommissionCalculator
             builder.Services.AddScoped<ICommissionService, CommissionService>();
 
             var app = builder.Build();
+
+            app.UseExceptionHandlingMiddleware();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
