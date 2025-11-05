@@ -1,20 +1,18 @@
 import logo from './logo.png';
 import './App.css';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCommission, clearError } from './store/slices/commissionSlice';
 
 function App() {
+  const dispatch = useDispatch();
+  const { responseData, isLoading, error } = useSelector((state) => state.commission);
+
   const [formData, setFormData] = useState({
     localSalesCount: '',
     foreignSalesCount: '',
     averageSaleAmount: ''
   });
-  
-  const [results, setResults] = useState({
-    avalphaTechnologiesCommission: 0,
-    competitorCommission: 0
-  });
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,29 +20,28 @@ function App() {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) {
+      dispatch(clearError());
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    // TODO: Replace with actual API call to backend
-    setTimeout(() => {
-      // Mock calculation for now
-      const localCommission = parseFloat(formData.localSalesCount) * parseFloat(formData.averageSaleAmount) * 0.20;
-      const foreignCommission = parseFloat(formData.foreignSalesCount) * parseFloat(formData.averageSaleAmount) * 0.35;
-      const avalphaTechnologiesTotal = localCommission + foreignCommission;
-      
-      const competitorLocal = parseFloat(formData.localSalesCount) * parseFloat(formData.averageSaleAmount) * 0.02;
-      const competitorForeign = parseFloat(formData.foreignSalesCount) * parseFloat(formData.averageSaleAmount) * 0.0755;
-      const competitorTotal = competitorLocal + competitorForeign;
-      
-      setResults({
-        avalphaTechnologiesCommission: avalphaTechnologiesTotal.toFixed(2),
-        competitorCommission: competitorTotal.toFixed(2)
-      });
-      setIsLoading(false);
-    }, 1000);
+    const requestData = {
+      localSalesCount: parseFloat(formData.localSalesCount) || 0,
+      foreignSalesCount: parseFloat(formData.foreignSalesCount) || 0,
+      averageSaleAmount: parseFloat(formData.averageSaleAmount) || 0,
+    };
+
+    dispatch(fetchCommission(requestData));
+  };
+
+  // Get results from Redux state or default to 0
+  const results = {
+    avalphaTechnologiesCommission: responseData?.avalphaTechnologiesCommission || 0,
+    competitorCommission: responseData?.competitorCommission || 0
   };
 
   return (
@@ -109,6 +106,19 @@ function App() {
               >
                 {isLoading ? 'Calculating...' : 'Calculate Commission'}
               </button>
+              
+              {error && (
+                <div className="error-message" style={{ 
+                  marginTop: '1rem', 
+                  padding: '0.75rem', 
+                  backgroundColor: '#fee', 
+                  color: '#c33', 
+                  borderRadius: '4px',
+                  border: '1px solid #fcc'
+                }}>
+                  <strong>Error:</strong> {error}
+                </div>
+              )}
             </form>
           </div>
 
@@ -121,7 +131,9 @@ function App() {
                   <span className="commission-rates">Local: 20% | Foreign: 35%</span>
                 </div>
                 <div className="result-amount">
-                  £{results.avalphaTechnologiesCommission}
+                  £{typeof results.avalphaTechnologiesCommission === 'number' 
+                    ? results.avalphaTechnologiesCommission.toFixed(2) 
+                    : results.avalphaTechnologiesCommission}
                 </div>
               </div>
               
@@ -131,7 +143,9 @@ function App() {
                   <span className="commission-rates">Local: 2% | Foreign: 7.55%</span>
                 </div>
                 <div className="result-amount">
-                  £{results.competitorCommission}
+                  £{typeof results.competitorCommission === 'number' 
+                    ? results.competitorCommission.toFixed(2) 
+                    : results.competitorCommission}
                 </div>
               </div>
             </div>
@@ -140,7 +154,14 @@ function App() {
               <div className="advantage-indicator">
                 <p className="advantage-text">
                   Avalpha Technologies advantage: 
-                  <strong> £{(results.avalphaTechnologiesCommission - results.competitorCommission).toFixed(2)}</strong>
+                  <strong> £{(
+                    (typeof results.avalphaTechnologiesCommission === 'number' 
+                      ? results.avalphaTechnologiesCommission 
+                      : parseFloat(results.avalphaTechnologiesCommission) || 0) -
+                    (typeof results.competitorCommission === 'number' 
+                      ? results.competitorCommission 
+                      : parseFloat(results.competitorCommission) || 0)
+                  ).toFixed(2)}</strong>
                 </p>
               </div>
             )}
