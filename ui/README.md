@@ -1,3 +1,80 @@
+# Avalpha Technologies — Commission Calculator (Frontend)
+
+This is the React frontend for the Commission Calculator app.
+
+## Overview
+
+- Built with Create React App (JavaScript)
+- Provides a simple UI to send sales data to the backend and display commission results.
+
+## Prerequisites
+
+- Node.js (LTS) and npm installed: https://nodejs.org/
+
+## Install & Run (Windows PowerShell)
+
+Open PowerShell and run:
+
+```powershell
+Set-Location -Path 'd:\assignment3\Assesment-1\ui'
+npm install
+npm start
+```
+
+The dev server defaults to `http://localhost:3000`.
+
+## Environment / API base URL
+
+The frontend reads `API_BASE_URL` from `process.env.REACT_APP_API_BASE_URL`. The default in the code is `https://localhost:5000/api`.
+
+To override in PowerShell for a single run:
+
+```powershell
+$env:REACT_APP_API_BASE_URL = 'https://localhost:5000/api'
+npm start
+```
+
+Or create a `.env` file in the `ui` folder with:
+
+```text
+REACT_APP_API_BASE_URL=https://localhost:5000/api
+```
+
+## What the app calls
+
+- POST `${API_BASE_URL}/Commision` with JSON payload:
+
+```json
+{
+  "localSalesCount": 10,
+  "foreignSalesCount": 5,
+  "averageSaleAmount": 100
+}
+```
+
+Backend response expected (current API):
+
+```json
+{
+  "avalphaTechnologiesCommissionAmount": 550,
+  "competitorCommissionAmount": 95.5
+}
+```
+
+The Redux slice normalizes those keys to `avalphaTechnologiesCommission` and `competitorCommission` so the UI displays the values directly.
+
+## Troubleshooting
+
+- CORS 405 errors: ensure the backend CORS policy includes `http://localhost:3000` (scheme + host + port) and that the API is running on the configured `API_BASE_URL`.
+- If the API is hosted with HTTPS and uses a dev/self-signed certificate, the browser may block requests; either install the cert or run the frontend to call the API via a matching origin or use the browser's dev certificate trust flow.
+
+## Testing
+
+1. Start the backend (see `api/README.md`).
+2. Start the frontend (`npm start`).
+3. Open `http://localhost:3000`, fill the form and click Calculate.
+4. Inspect DevTools → Network to see the OPTIONS (preflight) and POST requests.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
