@@ -1,4 +1,7 @@
 
+using AvalphaTechnologies.CommissionCalculator.Services;
+using AvalphaTechnologies.CommissionCalculator.Services.Interfaces;
+
 namespace AvalphaTechnologies.CommissionCalculator
 {
     public class Program
@@ -13,6 +16,8 @@ namespace AvalphaTechnologies.CommissionCalculator
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<ICommissionService, CommissionService>();
 
             var app = builder.Build();
 
